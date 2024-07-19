@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Huxy", "src\Huxy\Huxy.csproj", "{9BA927CB-AF32-42AA-997B-672D546B49DF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{555491B7-2C49-4299-8930-2CFB57562599}"
+	ProjectSection(SolutionItems) = preProject
+		version.yml = version.yml
+		README.adoc = README.adoc
+		src\Directory.Packages.props = src\Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Huxy.Tests", "src\tests\Huxy.Tests\Huxy.Tests.csproj", "{6804BE20-08A3-4446-ACD1-B1E9E52BF5AF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{83C88D09-FBAB-4EED-AB19-B4837FA04BB2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9BA927CB-AF32-42AA-997B-672D546B49DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BA927CB-AF32-42AA-997B-672D546B49DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BA927CB-AF32-42AA-997B-672D546B49DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BA927CB-AF32-42AA-997B-672D546B49DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6804BE20-08A3-4446-ACD1-B1E9E52BF5AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6804BE20-08A3-4446-ACD1-B1E9E52BF5AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6804BE20-08A3-4446-ACD1-B1E9E52BF5AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6804BE20-08A3-4446-ACD1-B1E9E52BF5AF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6804BE20-08A3-4446-ACD1-B1E9E52BF5AF} = {83C88D09-FBAB-4EED-AB19-B4837FA04BB2}
+	EndGlobalSection
+EndGlobal

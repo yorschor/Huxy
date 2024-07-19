@@ -1,0 +1,72 @@
+= Huxy
+
+[cols="^3,^1", frame=none grid=cols]
+|===
+a|
+[cols="1,1,>4", frame=none, grid=none]
+!===
+
+a! image::https://img.shields.io/badge/c%23-%23239120 .svg?&logo=csharp&logoColor=white[C#]
+a! image:https://img.shields.io/nuget/v/Huxy[NuGet Version]
+
+a! Current Version:
+include::version.yml[lines="3"]
+
+!===
+Huxy is a simple library for handling results in C#.
+
+Nothing fancy.
+Nothing more.
+
+The name Huxy is reference of the 1994 move https://getyarn.io/yarn-clip/ad50857b-3d4a-4d2c-8fb6-213f137eadb2/gif#-6iXlTZf.copy["The Hudsucker Proxy"]
+
+a|image::icon.png[]
+|===
+
+== Usage
+
+=== OkResult
+
+[source,csharp]
+----
+var result = Result.Ok();
+var result = Result.Ok("Data");
+----
+
+=== ErrorResult
+
+[source,csharp]
+----
+var result = Result.Error("An error occurred");
+var result = Result.Error("An error occurred", new List<Error>
+{
+    new("ERR001", "Error 1 details"),
+    new("ERR002", "Error 2 details")
+});
+var result = Result.Error(new Error("ERR001", "Error 1 details"));
+----
+
+=== Easy Creation
+
+[source,csharp]
+----
+var result = Result.Ok();
+var result = Result.Error("An error occurred");
+----
+
+=== Error
+
+[source,csharp]
+----
+var error = new Error("ERR001", "Error 1 details");
+var error = new Error("Error details");
+----
+
+For more examples checkout either the unit tests or https://github.com/yorschor/Chrono[Chrono] (Another project of mine).
+
+Attributions
+
+* Husky by Anna Baker from https://thenounproject.com/browse/icons/term/husky/"[Husky Icons] - The Noun Project (CC BY 3.0)
+
+* The creation of this project was aided by AI tools from https://supermaven.com/[Supermaven].  
+
