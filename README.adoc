@@ -3,12 +3,12 @@
 [cols="^3,^1", frame=none grid=cols]
 |===
 a|
-[cols="1,1,>4", frame=none, grid=none]
+[cols="1,1,1,4", frame=none, grid=none]
 !===
 
 a! image::https://img.shields.io/badge/c%23-%23239120 .svg?&logo=csharp&logoColor=white[C#]
-a! image:https://img.shields.io/nuget/v/Huxy[NuGet Version]
-
+a! image::https://img.shields.io/nuget/v/huxy[NuGet Version]
+a! image::https://img.shields.io/nuget/dt/huxy[NuGet Downloads]
 a! Current Version:
 include::version.yml[lines="3"]
 
