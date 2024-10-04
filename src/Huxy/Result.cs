@@ -11,14 +11,17 @@ namespace Huxy
         public IReadOnlyCollection<Error> Errors { get; protected set; } = Array.Empty<Error>();
         public static implicit operator bool(Result result) => result.Success;
 
+        public Exception Exception { get; protected set; } = new Exception("Not set");
         public static OkResult Ok() => new OkResult();
         public static OkResult<T> Ok<T>(T data) => new OkResult<T>(data);
         public static ErrorResult Error(string message) => new ErrorResult(message);
         public static ErrorResult Error(string message, IReadOnlyCollection<Error> errors) => new ErrorResult(message, errors);
         public static ErrorResult Error(Result errorResult) => new ErrorResult(errorResult.Message, errorResult.Errors);
+        public static ErrorResult Error(Exception exception) => new ErrorResult(exception);
         public static ErrorResult<T> Error<T>(string message) => new ErrorResult<T>(message);
         public static ErrorResult<T> Error<T>(string message, IReadOnlyCollection<Error> errors) => new ErrorResult<T>(message, errors);
         public static ErrorResult<T> Error<T>(Result errorResult) => new ErrorResult<T>(errorResult.Message, errorResult.Errors);
+        public static ErrorResult<T> Error<T>(Exception exception) => new ErrorResult<T>(exception);
     }
 
     public abstract class Result<T> : Result
@@ -63,6 +66,11 @@ namespace Huxy
         {
         }
 
+        public ErrorResult(Exception exception) : this(exception.Message, Array.Empty<Error>())
+        {
+            Exception = exception;
+        }
+
         public ErrorResult(string message, IReadOnlyCollection<Error> errors)
         {
             Message = message;
@@ -76,6 +84,12 @@ namespace Huxy
         public ErrorResult(string message) : this(message, Array.Empty<Error>())
         {
         }
+        
+        public ErrorResult(Exception exception) : this(exception.Message, Array.Empty<Error>())
+        {
+            Exception = exception;
+        }
+
 
         public ErrorResult(string message, IReadOnlyCollection<Error> errors) : base(default(T))
         {
