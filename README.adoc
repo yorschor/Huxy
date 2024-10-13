@@ -24,7 +24,7 @@ a|image::icon.png[]
 |===
 
 [CAUTION]
-Version 2.0.0 contains rewrite of the API.
+Version 2.0.0 contains a rewrite of the API.
 Please refer to the changelog for more information if you want to upgrade from 1.0.0.
 
 == Usage
@@ -41,13 +41,13 @@ var result = Result.Ok("Data");
 
 [source,csharp]
 ----
-var result = Result.Nope("An error occurred");
-var result = Result.Nope("An error occurred", new List<Error>
+var result = Result.Fail("An error occurred");
+var result = Result.Fail("An error occurred", new List<Error>
 {
     new("ERR001", "Error 1 details"),
     new("ERR002", "Error 2 details")
 });
-var result = Result.Nope(new Exception("An error occurred"));
+var result = Result.Fail(new Exception("An error occurred"));
 ----
 
 === Easy Creation
@@ -55,7 +55,7 @@ var result = Result.Nope(new Exception("An error occurred"));
 [source,csharp]
 ----
 var result = Result.Ok();
-var result = Result.Nope("An error occurred");
+var result = Result.Fail("An error occurred");
 ----
 
 === Passing an Exception
@@ -64,8 +64,8 @@ var result = Result.Nope("An error occurred");
 ----
 catch (Exception e) 
 {   
-    return Result.Nope("Nope Reason", e);
-    var error = new Nope("Nope details");
+    return Result.Fail("Fail Reason", e);
+    var error = new Fail("Fail details");
 }
 ----
 
