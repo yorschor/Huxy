@@ -42,7 +42,7 @@ namespace Huxy.Tests
             var message = "An error occurred";
 
             // Act
-            var result = Result.Nope(message);
+            var result = Result.Fail(message);
 
             // Assert
             Assert.False(result.Success);
@@ -59,7 +59,7 @@ namespace Huxy.Tests
             var exception = new Exception("Test exception");
 
             // Act
-            var result = Result.Nope(message, exception);
+            var result = Result.Fail(message, exception);
 
             // Assert
             Assert.False(result.Success);
@@ -75,7 +75,7 @@ namespace Huxy.Tests
             var exception = new Exception("Exception message");
 
             // Act
-            var result = Result.Nope(exception);
+            var result = Result.Fail(exception);
 
             // Assert
             Assert.False(result.Success);
@@ -91,7 +91,7 @@ namespace Huxy.Tests
             var message = "An error occurred";
 
             // Act
-            var result = Result.Nope<int>(message);
+            var result = Result.Fail<int>(message);
 
             // Assert
             Assert.False(result.Success);
@@ -134,7 +134,7 @@ namespace Huxy.Tests
         public void NopeResultWithImplicitConversion_ShouldReturnFalse()
         {
             // Arrange
-            var result = Result.Nope("An error occurred");
+            var result = Result.Fail("An error occurred");
 
             // Act & Assert
             Assert.False(result);
@@ -144,7 +144,7 @@ namespace Huxy.Tests
         public void AccessingDataOnNopeResult_ShouldThrowException()
         {
             // Arrange
-            var result = Result.Nope<string>("An error occurred");
+            var result = Result.Fail<string>("An error occurred");
 
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() =>
@@ -184,7 +184,7 @@ namespace Huxy.Tests
             var message = "An error occurred";
 
             // Act
-            var result = Result.Nope(message, null);
+            var result = Result.Fail(message, null);
 
             // Assert
             Assert.False(result.Success);
@@ -216,10 +216,10 @@ namespace Huxy.Tests
         {
             // Arrange
             var originalException = new Exception("Original exception");
-            var originalResult = Result.Nope("Original error message", originalException);
+            var originalResult = Result.Fail("Original error message", originalException);
 
             // Act
-            var newResult = Result.Nope(originalResult);
+            var newResult = Result.Fail(originalResult);
 
             // Assert
             Assert.False(newResult.Success);
@@ -233,10 +233,10 @@ namespace Huxy.Tests
         {
             // Arrange
             var originalException = new Exception("Original exception");
-            var originalResult = Result.Nope<string>("Original error message", originalException);
+            var originalResult = Result.Fail<string>("Original error message", originalException);
 
             // Act
-            var newResult = Result.Nope<string>(originalResult);
+            var newResult = Result.Fail<bool>(originalResult);
 
             // Assert
             Assert.False(newResult.Success);
@@ -248,5 +248,6 @@ namespace Huxy.Tests
                 var data = newResult.Data;
             });
         }
+        
     }
 }

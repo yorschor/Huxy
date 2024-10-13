@@ -2,7 +2,14 @@
 
 namespace Huxy
 {
-    public class Result<T>
+    public interface IResult
+    {
+        bool Success { get; }
+        bool Failure { get; }
+        string Message { get; }
+        Exception Exception { get; }
+    }
+    public class Result<T> : IResult
     {
         public bool Success { get; protected set; }
         public bool Failure => !Success;
@@ -46,15 +53,15 @@ namespace Huxy
         public static Result<T> Ok<T>(T data) => new Result<T>(data);
 
         // Generic Errors
-        public static Result Nope(string message) => new Result(message, null, false);
-        public static Result Nope(string message, Exception exception) => new Result(message, exception, false);
-        public static Result Nope(Exception exception) => new Result(exception.Message, exception, false);
-        public static Result Nope(Result other) => new Result(other.Message, other.Exception, false);
+        public static Result Fail(string message) => new Result(message, null, false);
+        public static Result Fail(string message, Exception exception) => new Result(message, exception, false);
+        public static Result Fail(Exception exception) => new Result(exception.Message, exception, false);
+        public static Result Fail(IResult other) => new Result(other.Message, other.Exception, false);
 
         // Typed Errors
-        public static Result<TE> Nope<TE>(string message) => new Result<TE>(default, message, null, false);
-        public static Result<TE> Nope<TE>(string message, Exception exception) => new Result<TE>(default, message, exception, false);
-        public static Result<TE> Nope<TE>(Exception exception) => new Result<TE>(default, exception.Message, exception, false);
-        public static Result<TE> Nope<TE>(Result<TE> other) => new Result<TE>(default, other.Message, other.Exception, false);
+        public static Result<TE> Fail<TE>(string message) => new Result<TE>(default, message, null, false);
+        public static Result<TE> Fail<TE>(string message, Exception exception) => new Result<TE>(default, message, exception, false);
+        public static Result<TE> Fail<TE>(Exception exception) => new Result<TE>(default, exception.Message, exception, false);
+        public static Result<TE> Fail<TE>(IResult other) => new Result<TE>(default, other.Message, other.Exception, false);
     }
 }
