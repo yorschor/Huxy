@@ -1,0 +1,11 @@
+﻿<Solution>
+  <Folder Name="/SolutionItems/">
+    <File Path="version.yml" />
+    <File Path="README.adoc" />
+    <File Path="src\Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="src\tests\Huxy.Tests\Huxy.Tests.csproj" Type="Classic C#" />
+  </Folder>
+  <Project Path="src\Huxy\Huxy.csproj" Type="Classic C#" />
+</Solution>
