@@ -1,125 +1,67 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Huxy
 {
-    public abstract class Result
+    public interface IResult
+    {
+        bool Success { get; }
+        bool Failure { get; }
+        string Message { get; }
+        Exception Exception { get; }
+    }
+    public class Result<T> : IResult
     {
         public bool Success { get; protected set; }
         public bool Failure => !Success;
         public string Message { get; protected set; }
-        public IReadOnlyCollection<Error> Errors { get; protected set; } = Array.Empty<Error>();
-        public static implicit operator bool(Result result) => result.Success;
+        public Exception Exception { get; protected set; }
 
-        public Exception Exception { get; protected set; } = new Exception("Not set");
-        public static OkResult Ok() => new OkResult();
-        public static OkResult<T> Ok<T>(T data) => new OkResult<T>(data);
-        public static ErrorResult Error(string message) => new ErrorResult(message);
-        public static ErrorResult Error(string message, IReadOnlyCollection<Error> errors) => new ErrorResult(message, errors);
-        public static ErrorResult Error(Result errorResult) => new ErrorResult(errorResult.Message, errorResult.Errors);
-        public static ErrorResult Error(Exception exception) => new ErrorResult(exception);
-        public static ErrorResult<T> Error<T>(string message) => new ErrorResult<T>(message);
-        public static ErrorResult<T> Error<T>(string message, IReadOnlyCollection<Error> errors) => new ErrorResult<T>(message, errors);
-        public static ErrorResult<T> Error<T>(Result errorResult) => new ErrorResult<T>(errorResult.Message, errorResult.Errors);
-        public static ErrorResult<T> Error<T>(Exception exception) => new ErrorResult<T>(exception);
-    }
-
-    public abstract class Result<T> : Result
-    {
         private T _data;
 
-        protected Result(T data)
+        public Result(T data, string message = "", Exception exception = null, bool success = true)
         {
             _data = data;
+            Success = success;
+            Message = message;
+            Exception = exception;
         }
 
         public T Data
         {
             get => Success
                 ? _data
-                : throw new Exception($"You can't access .{nameof(Data)} when .{nameof(Success)} is false");
+                : throw new InvalidOperationException($"You can't access .{nameof(Data)} when .{nameof(Success)} is false");
             protected set => _data = value;
         }
 
         public static implicit operator bool(Result<T> result) => result.Success;
     }
 
-    public class OkResult : Result, IOkResult
-    {
-        public OkResult()
-        {
-            Success = true;
-        }
-    }
 
-    public class OkResult<T> : Result<T>, IOkResult
-    {
-        public OkResult(T data) : base(data)
-        {
-            Success = true;
-        }
-    }
-
-    public class ErrorResult : Result, IErrorResult
-    {
-        public ErrorResult(string message) : this(message, Array.Empty<Error>())
-        {
-        }
-
-        public ErrorResult(Exception exception) : this(exception.Message, Array.Empty<Error>())
-        {
-            Exception = exception;
-        }
-
-        public ErrorResult(string message, IReadOnlyCollection<Error> errors)
-        {
-            Message = message;
-            Success = false;
-            Errors = errors ?? Array.Empty<Error>();
-        }
-    }
-
-    public class ErrorResult<T> : Result<T>, IErrorResult
-    {
-        public ErrorResult(string message) : this(message, Array.Empty<Error>())
-        {
-        }
-        
-        public ErrorResult(Exception exception) : this(exception.Message, Array.Empty<Error>())
-        {
-            Exception = exception;
-        }
-
-
-        public ErrorResult(string message, IReadOnlyCollection<Error> errors) : base(default(T))
-        {
-            Message = message;
-            Success = false;
-            Errors = errors ?? Array.Empty<Error>();
-        }
-    }
-
-    public class Error
-    {
-        public Error(string code, string details)
-        {
-            Code = code;
-            Details = details;
-        }
-
-        public Error(string details) : this(null, details)
-        {
-        }
-
-        public string Code { get; }
-        public string Details { get; }
-    }
-
-    public interface IErrorResult
+    public readonly struct None
     {
     }
 
-    public interface IOkResult
+    public class Result : Result<None>
     {
+        public Result(string message = "", Exception exception = null, bool success = true) : base(default, message, exception, success)
+        {
+        }
+
+        //Ok 
+        public static Result Ok() => new Result();
+        public static Result<T> Ok<T>(T data) => new Result<T>(data);
+
+        // Generic Errors
+        public static Result Fail(string message) => new Result(message, null, false);
+        public static Result Fail(string message, Exception exception) => new Result(message, exception, false);
+        public static Result Fail(Exception exception) => new Result(exception.Message, exception, false);
+        public static Result Fail(IResult other) => new Result(other.Message, other.Exception, false);
+
+        // Typed Errors
+        public static Result<TE> Fail<TE>(string message) => new Result<TE>(default, message, null, false);
+        public static Result<TE> Fail<TE>(string message, Exception exception) => new Result<TE>(default, message, exception, false);
+        public static Result<TE> Fail<TE>(Exception exception) => new Result<TE>(default, exception.Message, exception, false);
+        public static Result<TE> Fail<TE>(IResult other) => new Result<TE>(default, other.Message, other.Exception, false);
     }
 }

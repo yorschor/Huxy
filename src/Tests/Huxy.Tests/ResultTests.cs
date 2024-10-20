@@ -1,3 +1,6 @@
+using System;
+using Xunit;
+
 namespace Huxy.Tests
 {
     public class ResultTests
@@ -11,6 +14,8 @@ namespace Huxy.Tests
             // Assert
             Assert.True(result.Success);
             Assert.False(result.Failure);
+            Assert.Empty(result.Message);
+            Assert.Null(result.Exception);
         }
 
         [Fact]
@@ -26,65 +31,93 @@ namespace Huxy.Tests
             Assert.True(result.Success);
             Assert.False(result.Failure);
             Assert.Equal(data, result.Data);
+            Assert.Empty(result.Message);
+            Assert.Null(result.Exception);
         }
 
         [Fact]
-        public void ErrorResult_ShouldBeFailure()
+        public void NopeResult_ShouldBeFailure()
         {
             // Arrange
             var message = "An error occurred";
 
             // Act
-            var result = Result.Error(message);
+            var result = Result.Fail(message);
 
             // Assert
             Assert.False(result.Success);
             Assert.True(result.Failure);
             Assert.Equal(message, result.Message);
-            Assert.Empty(result.Errors);
+            Assert.Null(result.Exception);
         }
 
         [Fact]
-        public void ErrorResultWithErrors_ShouldBeFailureAndContainErrors()
+        public void NopeResult_WithException_ShouldContainException()
         {
             // Arrange
-            const string message = "An error occurred";
-            var errors = new List<Error>
-            {
-                new("ERR001", "Error 1 details"),
-                new("ERR002", "Error 2 details")
-            };
+            var message = "An error occurred";
+            var exception = new Exception("Test exception");
 
             // Act
-            var result = Result.Error(message, errors);
+            var result = Result.Fail(message, exception);
 
             // Assert
             Assert.False(result.Success);
             Assert.True(result.Failure);
             Assert.Equal(message, result.Message);
-            Assert.Equal(errors, result.Errors);
+            Assert.Equal(exception, result.Exception);
         }
 
         [Fact]
-        public void ErrorResultFromAnotherResult_ShouldBeFailureAndContainErrors()
+        public void NopeResult_WithExceptionOnly_ShouldSetMessageFromException()
         {
             // Arrange
-            const string message = "An error occurred";
-            var errors = new List<Error>
-            {
-                new("ERR001", "Error 1 details"),
-                new("ERR002", "Error 2 details")
-            };
-            var originalResult = Result.Error(message, errors);
+            var exception = new Exception("Exception message");
 
             // Act
-            var result = Result.Error(originalResult);
+            var result = Result.Fail(exception);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.True(result.Failure);
+            Assert.Equal(exception.Message, result.Message);
+            Assert.Equal(exception, result.Exception);
+        }
+
+        [Fact]
+        public void TypedNopeResult_ShouldBeFailure()
+        {
+            // Arrange
+            var message = "An error occurred";
+
+            // Act
+            var result = Result.Fail<int>(message);
 
             // Assert
             Assert.False(result.Success);
             Assert.True(result.Failure);
             Assert.Equal(message, result.Message);
-            Assert.Equal(errors, result.Errors);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                var data = result.Data;
+            });
+        }
+
+        [Fact]
+        public void TypedOkResult_ShouldBeSuccessfulAndContainData()
+        {
+            // Arrange
+            var data = 42;
+
+            // Act
+            var result = Result.Ok(data);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.False(result.Failure);
+            Assert.Equal(data, result.Data);
+            Assert.Empty(result.Message);
+            Assert.Null(result.Exception);
         }
 
         [Fact]
@@ -98,55 +131,123 @@ namespace Huxy.Tests
         }
 
         [Fact]
-        public void ErrorResultWithImplicitConversion_ShouldReturnFalse()
+        public void NopeResultWithImplicitConversion_ShouldReturnFalse()
         {
             // Arrange
-            var result = Result.Error("An error occurred");
+            var result = Result.Fail("An error occurred");
 
             // Act & Assert
             Assert.False(result);
         }
 
         [Fact]
-        public void AccessingDataOnErrorResult_ShouldThrowException()
+        public void AccessingDataOnNopeResult_ShouldThrowException()
         {
             // Arrange
-            var result = Result.Error<string>("An error occurred");
+            var result = Result.Fail<string>("An error occurred");
 
             // Act & Assert
-            Assert.Throws<Exception>(() => { _ = result.Data; });
-        }
-    }
-
-    public class ErrorTests
-    {
-        [Fact]
-        public void Error_ShouldInitializeCorrectly()
-        {
-            // Arrange
-            const string code = "ERR001";
-            const string details = "Error details";
-
-            // Act
-            var error = new Error(code, details);
-
-            // Assert
-            Assert.Equal(code, error.Code);
-            Assert.Equal(details, error.Details);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                var data = result.Data;
+            });
         }
 
         [Fact]
-        public void ErrorWithoutCode_ShouldInitializeCorrectly()
+        public void AccessingDataOnSuccessResult_ShouldReturnData()
         {
             // Arrange
-            const string details = "Error details";
+            var data = "Test Data";
+            var result = Result.Ok(data);
 
             // Act
-            var error = new Error(details);
+            var retrievedData = result.Data;
 
             // Assert
-            Assert.Null(error.Code);
-            Assert.Equal(details, error.Details);
+            Assert.Equal(data, retrievedData);
         }
+
+        [Fact]
+        public void OkResult_ShouldHaveNullException()
+        {
+            // Arrange
+            var result = Result.Ok();
+
+            // Act & Assert
+            Assert.Null(result.Exception);
+        }
+
+        [Fact]
+        public void NopeResult_WithNullException_ShouldHaveMessageOnly()
+        {
+            // Arrange
+            var message = "An error occurred";
+
+            // Act
+            var result = Result.Fail(message, null);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.True(result.Failure);
+            Assert.Equal(message, result.Message);
+            Assert.Null(result.Exception);
+        }
+
+        [Fact]
+        public void Result_GenericConstructor_ShouldSetPropertiesCorrectly()
+        {
+            // Arrange
+            var data = 123;
+            var message = "Custom message";
+            var exception = new Exception("Test exception");
+
+            // Act
+            var result = new Result<int>(data, message, exception, true);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.Equal(data, result.Data);
+            Assert.Equal(message, result.Message);
+            Assert.Equal(exception, result.Exception);
+        }
+
+        [Fact]
+        public void NopeResult_FromAnotherResult_ShouldCopyMessageAndException()
+        {
+            // Arrange
+            var originalException = new Exception("Original exception");
+            var originalResult = Result.Fail("Original error message", originalException);
+
+            // Act
+            var newResult = Result.Fail(originalResult);
+
+            // Assert
+            Assert.False(newResult.Success);
+            Assert.True(newResult.Failure);
+            Assert.Equal(originalResult.Message, newResult.Message);
+            Assert.Equal(originalResult.Exception, newResult.Exception);
+        }
+
+        [Fact]
+        public void TypedNopeResult_FromAnotherTypedResult_ShouldCopyMessageAndException()
+        {
+            // Arrange
+            var originalException = new Exception("Original exception");
+            var originalResult = Result.Fail<string>("Original error message", originalException);
+
+            // Act
+            var newResult = Result.Fail<bool>(originalResult);
+
+            // Assert
+            Assert.False(newResult.Success);
+            Assert.True(newResult.Failure);
+            Assert.Equal(originalResult.Message, newResult.Message);
+            Assert.Equal(originalResult.Exception, newResult.Exception);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                var data = newResult.Data;
+            });
+        }
+        
     }
 }

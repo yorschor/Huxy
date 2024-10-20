@@ -1,9 +1,9 @@
 = Huxy
 
-[cols="^3,^1", frame=none grid=cols]
+[cols="^3,^1",frame=none grid=cols]
 |===
 a|
-[cols="1,1,1,4", frame=none, grid=none]
+[cols="1,1,1,4",frame=none,grid=none]
 !===
 
 a! image::https://img.shields.io/badge/c%23-%23239120 .svg?&logo=csharp&logoColor=white[C#]
@@ -23,9 +23,13 @@ The name Huxy is reference of the 1994 move https://getyarn.io/yarn-clip/ad50857
 a|image::icon.png[]
 |===
 
+[CAUTION]
+Version 2.0.0 contains a rewrite of the API.
+Please refer to the changelog for more information if you want to upgrade from 1.0.0.
+
 == Usage
 
-=== OkResult
+=== Successful Result
 
 [source,csharp]
 ----
@@ -33,17 +37,17 @@ var result = Result.Ok();
 var result = Result.Ok("Data");
 ----
 
-=== ErrorResult
+=== Unsuccessful Result
 
 [source,csharp]
 ----
-var result = Result.Error("An error occurred");
-var result = Result.Error("An error occurred", new List<Error>
+var result = Result.Fail("An error occurred");
+var result = Result.Fail("An error occurred", new List<Error>
 {
     new("ERR001", "Error 1 details"),
     new("ERR002", "Error 2 details")
 });
-var result = Result.Error(new Error("ERR001", "Error 1 details"));
+var result = Result.Fail(new Exception("An error occurred"));
 ----
 
 === Easy Creation
@@ -51,15 +55,18 @@ var result = Result.Error(new Error("ERR001", "Error 1 details"));
 [source,csharp]
 ----
 var result = Result.Ok();
-var result = Result.Error("An error occurred");
+var result = Result.Fail("An error occurred");
 ----
 
-=== Error
+=== Passing an Exception
 
 [source,csharp]
 ----
-var error = new Error("ERR001", "Error 1 details");
-var error = new Error("Error details");
+catch (Exception e) 
+{   
+    return Result.Fail("Fail Reason", e);
+    var error = new Fail("Fail details");
+}
 ----
 
 For more examples checkout either the unit tests or https://github.com/yorschor/Chrono[Chrono] (Another project of mine).
